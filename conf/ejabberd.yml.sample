@@ -1,0 +1,19 @@
+
+##################################################################
+# 自定义模块配置示例
+##################################################################
+##
+## Modules enabled in all ejabberd virtual hosts.
+##
+modules: 
+## 自定义功能
+  mod_logger: {}        ## 放在加载模块的最前面
+  mod_dump_packet:      ## 将XMPP包内容输出到日志文件中
+    user: ["shb", "abc"]	## 限定仅输出相应的sender/receiver
+    ##stanza: ["message"]	## 限定仅输出相应的stanza
+  mod_receipts_ack: {}  ## 实现XEP-0184协议的服务器回应
+##
+## 后面省略其他配置……
+##
+
+
