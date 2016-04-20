@@ -3,18 +3,21 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 输出XMPP包内容到文件
 %%% Created	: 2016.3.22
-%%% Version	: 5/2016.0330
+%%% Version	: 6/2016.0420
 %%% Dependencies:
 %%%		mod_logger			log4erl的模块封装
 %%%		log4erl				独立的日志工具
 %%%		mochiweb			log4erl依赖项
+%%%		fast_xml			原p1_xml，xml工具
+%%%		p1_utils			fast_xml依赖项
 %%%		xmlel_indent.erl	为#xmlel添加缩进空格等信息
 %%%
 %%%--------------------------------------------------------
 
 -module(mod_dump_packet).
 -author(daimaqiao).
--vsn(5).
+-vsn(6).
+-date({2016,4,20}).
 
 -behavior(gen_mod).
 
@@ -93,7 +96,7 @@ dump_to_text({From= #jid{}, To= #jid{}, Packet= #xmlel{}}) ->
 	Id2= jlib:jid_to_string(To),
 	Xmlel1= xmlel_indent:deflate_xmlel(Packet),
 	Xmlel2= xmlel_indent:inflate_xmlel(Xmlel1),
-	Xml= xml:element_to_binary(Xmlel2),
+	Xml= fxml:element_to_binary(Xmlel2),
 	do_dump_packet({binary_to_list(Id1), binary_to_list(Id2),
 					binary_to_list(Xml)});
 dump_to_text(All) ->

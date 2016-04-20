@@ -3,10 +3,10 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 为#xmlel补充/清除缩进空格等信息（换行或空格）
 %%% Created	: 2016.3.24
-%%% Version	: 1/2016.0324
+%%% Version	: 1/2016.0420
 %%% Dependencies:
-%%%		p1_xml		process-one出品的xml工具
-%%%		p1-utils	p1_xml依赖项
+%%%		fast_xml	原p1_xml，process-one出品的xml工具
+%%%		p1_utils	fast_xml依赖项
 %%%
 %%%--------------------------------------------------------
 

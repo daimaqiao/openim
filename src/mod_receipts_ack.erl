@@ -3,10 +3,12 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 实现XEP-0184协议的服务端应答
 %%% Created	: 2016.3.29
-%%% Version	: 2/2016.0330
+%%% Version	: 3/2016.0420
 %%% Dependencies:
 %%%		log4erl		独立的日志工具
 %%%		mochiweb	log4erl依赖项
+%%%		fast_xml	原p1_xml，xml工具
+%%%		p1_utils	fast_xml依赖项
 %%%	Input	: $EJABBERD_HOME/etc/ejabberd/mod_logger.conf
 %%%	Output	: $EJABBERD_HOME/var/log/ejabberd/mod_logger.log
 %%%
@@ -17,7 +19,8 @@
 
 -module(mod_receipts_ack).
 -author(daimaqiao).
--vsn(2).
+-vsn(3).
+-date({2016,4,20}).
 
 -behavior(gen_mod).
 
@@ -60,16 +63,16 @@ install_receipts_ack(Host) ->
 %% 返回Packet
 %%
 receipts_ack(Packet= #xmlel{name= <<"message">>, attrs= Attrs}, _C2SStage, From, To) ->
-	case xml:get_attr_s(<<"type">>, Attrs) of
+	case fxml:get_attr_s(<<"type">>, Attrs) of
 		<<"chat">> ->
-			case xml:get_subtag_with_xmlns(Packet, <<"request">>, ?NS_RECEIPTS) of
+			case fxml:get_subtag_with_xmlns(Packet, <<"request">>, ?NS_RECEIPTS) of
 				false ->
 					%% no receipts request
 					ok;
 				_ ->
 					do_receipts_ack(From, To,
-									xml:get_attr_s(<<"id">>, Attrs),
-									xml:get_subtag_cdata(Packet, <<"body">>))
+									fxml:get_attr_s(<<"id">>, Attrs),
+									fxml:get_subtag_cdata(Packet, <<"body">>))
 			end;
 		_ ->
 			%% ignore non-chat-type
