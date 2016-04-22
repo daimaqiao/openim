@@ -85,13 +85,13 @@ receipts_ack(Packet, _, _, _) ->
 %% do_receipts_ack(From, To, Id, Body)
 %% 参照XEP-0184协议，向From回应服务器端的Ack
 %% 返回ok
-do_receipts_ack(From, To, Id, Body) when size(Id)>0; size(Body)>0 ->
+do_receipts_ack(From, _To, Id, Body) when size(Id)>0; size(Body)>0 ->
 %%	?LOGD("Send receipts/Ack to ~ts~n"
 %%		  "for(~ts): [~ts]~ts~n",
-		  [binary_to_list(jlib:jid_to_string(From)),
-		   binary_to_list(jlib:jid_to_string(To)),
-		   binary_to_list(Id),
-		   binary_to_list(Body)]),
+%%		  [binary_to_list(jlib:jid_to_string(From)),
+%%		   binary_to_list(jlib:jid_to_string(To)),
+%%		   binary_to_list(Id),
+%%		   binary_to_list(Body)]),
 	Jid= make_jid_ack(From),
 	Xmlel= make_xmlel_ack(jlib:jid_to_string(From), Id),
     ejabberd_router:route(Jid, From, Xmlel);
