@@ -86,8 +86,8 @@ receipts_ack(Packet, _, _, _) ->
 %% 参照XEP-0184协议，向From回应服务器端的Ack
 %% 返回ok
 do_receipts_ack(From, To, Id, Body) when size(Id)>0; size(Body)>0 ->
-	?LOGD("Send receipts/Ack to ~ts~n"
-		  "for(~ts): [~ts]~ts~n",
+%%	?LOGD("Send receipts/Ack to ~ts~n"
+%%		  "for(~ts): [~ts]~ts~n",
 		  [binary_to_list(jlib:jid_to_string(From)),
 		   binary_to_list(jlib:jid_to_string(To)),
 		   binary_to_list(Id),
