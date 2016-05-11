@@ -3,7 +3,7 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 实现XEP-0184协议的服务端应答
 %%% Created	: 2016.3.29
-%%% Version	: 3/2016.0420
+%%% Version	: 4/2016.0511
 %%% Dependencies:
 %%%		log4erl		独立的日志工具
 %%%		mochiweb	log4erl依赖项
@@ -19,8 +19,8 @@
 
 -module(mod_receipts_ack).
 -author(daimaqiao).
--vsn(3).
--date({2016,4,20}).
+-vsn(4).
+-date({2016,5,11}).
 
 -behavior(gen_mod).
 
@@ -34,6 +34,7 @@
 
 -export([start/2, stop/1]).
 -export([install_receipts_ack/1, receipts_ack/4]).
+-export([mod_opt_type/1]).
 
 
 start(Host, Opts) ->
@@ -119,4 +120,9 @@ make_xmlel_ack(To, Id) ->
 									 {<<"id">>, Id}
 									], children= []}
 					 ]}.
+
+
+%% 不提供模块参数
+mod_opt_type(_) ->
+	[].
 

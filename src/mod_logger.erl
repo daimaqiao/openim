@@ -3,7 +3,7 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 实现独立的日志工具
 %%% Created	: 2016.3.22
-%%% Version	: 1/2016.0322
+%%% Version	: 2/2016.0511
 %%% Dependencies:
 %%%		log4erl		独立的日志工具
 %%%		mochiweb	log4erl依赖项
@@ -14,7 +14,8 @@
 
 -module(mod_logger).
 -author(daimaqiao).
--vsn(1).
+-vsn(2).
+-date({2016,5,11}).
 
 -behavior(gen_mod).
 
@@ -23,6 +24,7 @@
 -define(LOGGER, log4erl).
 
 -export([start/2, stop/1]).
+-export([mod_opt_type/1]).
 
 
 start(Host, Opts) ->
@@ -72,4 +74,8 @@ get_env_path(Key) ->
 			end
 	end.
 
+
+%% 不提供模块参数
+mod_opt_type(_) ->
+	[].
 

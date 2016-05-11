@@ -1,0 +1,13 @@
+%% modify rebar.config and add deps of 'log4erl' 
+%%{deps, [......,
+%%
+
+	{log4erl, ".*", {git, "https://github.com/ahmednawras/log4erl", {branch,"master"}}},
+
+%%
+%%	......]}.
+%%
+
+%%
+%% ......
+%%

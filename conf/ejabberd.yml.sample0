@@ -1,0 +1,279 @@
+
+##################################################################
+# 自定义模块配置示例
+##################################################################
+
+
+##
+## 主机配置示例
+hosts:
+  - "localhost"					## 修改为自己的主机IP或者域名
+
+
+
+
+##
+## 端口配置项示例
+listen: 
+  - 
+    port: 5222
+##	......
+    stream_management: false	## 关闭流管理：XEP-0198
+##  ......
+##  ......
+  - 
+    port: 5280
+##  ......
+    register: true				## 打开WEB注册用户
+##  ......
+##  ......
+
+
+
+
+##
+## 访问规则配置示例
+access:
+##
+## By default the frequency of account registrations from the same IP
+## is limited to 1 account every 10 minutes. To disable, specify: infinity
+  registration_timeout: 6			## 一分钟可以注册10次
+##
+## ......
+
+
+
+
+## ......
+## 管理员配置示例
+acl:
+## ......
+  admin:
+    user:
+      - "openim": "localhost"
+##
+## ......
+## ......
+
+
+
+
+##
+#auth_method: internal
+## 使用mysql数据库
+## ejabberd 16.04之前使用odbc关键字，现在使用sql关键字(下同)
+auth_method: sql	## mysql
+sm_db_type: sql		## session信息暂存在mysql中
+
+
+##
+## 配置mysql连接信息
+##
+sql_type: mysql
+sql_server: "localhost"
+sql_database: "ejabberd"
+sql_username: "ejabberd"
+sql_password: "123456"
+sql_port: 3306
+
+
+
+
+## ......
+## sql保持连接心跳处理周期，默认28800
+## 为避免出错，mysql的心跳处理周期应大于此值
+sql_keepalive_interval: 1800
+## ......
+
+
+
+
+
+##
+## 模块配置示例
+## 添加自定义模块
+modules: 
+## 自定义功能
+  mod_logger: {}        ## 放在加载模块的最前面
+  mod_dump_packet:      ## 将XMPP包内容输出到日志文件中
+    user: ["abc"]	    ## 限定仅输出相应的sender/receiver（可用逗号分隔多个用户）
+    ##stanza: ["message"]	## 限定仅输出相应的stanza（可用逗号分隔多个限定）
+  mod_receipts_ack: {}  ## 实现XEP-0184协议的服务器回应
+
+## 将历史消息保存在mysql中，修改相关模块的db_type属性（下同）
+## 消息存档管理：XEP-0313
+  mod_mam:
+    db_type: sql
+    default: always
+
+## 向grapherl（UDP端口：11111）发送计量类信息
+## grapherl需要单独配置，配置之后可能通过WEB方式查看计量类信息
+#  mod_metrics: {}
+
+## 通过WEB地址“http://....:5280/register/”注册用户
+## 需要在ejabberd_http配置块（比如5280端口）处添加：register: true
+  mod_register_web: {}
+
+
+## 以下是常见模块
+## 类似远程调用之类的功能
+  mod_adhoc: {}
+
+  ## 一些用于管理的约束项
+  ## mod_admin_extra: {}
+
+## 向固定成员（如全部，在线等）发布公告
+  mod_announce: # recommends mod_adhoc
+    access: announce
+    db_type: sql
+
+## 黑名单？
+  mod_blocking: {} # requires mod_privacy
+
+## 在presence信息中包含客户端功能信息
+  mod_caps: {}
+
+## 同一JID的不同resource都可以收到相同的消息
+  mod_carboncopy: {}
+
+## 在用户不活动时，丢弃纯粹的状态通告
+  mod_client_state: {}
+  #  drop_chat_states: true
+  #  queue_presence: true
+
+## 通过mod_adhoc实现服务器配置
+  mod_configure: {} # requires mod_adhoc
+
+## 服务端功能发现
+  mod_disco: {}
+
+  ## 原样回应XMPP片段
+  ## mod_echo: {}
+
+## IRC功能
+  mod_irc: #{}
+    db_type: sql
+
+## 基于HTTP BOSH的服务
+  mod_http_bind: {}
+  ## mod_http_fileserver:
+  ##   docroot: "/var/www"
+  ##   accesslog: "/var/log/ejabberd/access.log"
+
+## 记录用户最后一次访问服务器信息
+  mod_last: #{}
+    db_type: sql
+
+## 多人聊天功能
+  mod_muc: 
+    ## host: "conference.@HOST@"
+    access: muc
+    access_create: muc_create
+    access_persistent: muc_create
+    access_admin: muc_admin
+    db_type: sql
+
+  ## MUC日志记录功能
+  ## mod_muc_log: {}
+
+  ## 向服务器发一条消息，服务器自动分发给多个接收者
+  ## mod_multicast: {}
+
+## 离线消息
+  mod_offline: 
+    access_max_user_messages: max_user_offline_messages
+    db_type: sql
+
+## PING与维护连接
+  mod_ping: {}
+
+  ## 限制presence的发出频率
+  ## mod_pres_counter:
+  ##   count: 5
+  ##   interval: 60
+
+## 黑名单列表？
+  mod_privacy: #{}
+    db_type: sql
+
+## 在服务端存储客户端自定义的XML内容
+  mod_private: #{}
+    db_type: sql
+
+  ## 基于SOCKET5的字节流端到端透传
+  ## mod_proxy65: {}
+
+## 发布与定阅功能
+  mod_pubsub: 
+    access_createnode: pubsub_createnode
+    ## reduces resource comsumption, but XEP incompliant
+    ignore_pep_from_offline: true
+    ## XEP compliant, but increases resource comsumption
+    ## ignore_pep_from_offline: false
+    last_item_cache: false
+    plugins: 
+      - "flat"
+      - "hometree"
+      - "pep" # pep requires mod_caps
+    db_type: sql
+
+  ## 用户注册功能
+  mod_register:
+    ## Protect In-Band account registrations with CAPTCHA.
+    ##
+    ##   captcha_protected: true
+    ##
+    ## Set the minimum informational entropy for passwords.
+    ##
+    ##   password_strength: 32
+    ##
+    ## After successful registration, the user receives
+    ## a message with this subject and body.
+    ##
+    welcome_message:
+      subject: "Welcome!"
+      body: |-
+        Hi.
+        Welcome to OpenIM 1.0 server.
+    ##
+    ## When a user registers, send a notification to
+    ## these XMPP accounts.
+    ##
+    ##   registration_watchers:
+    ##     - "admin1@example.org"
+    ##
+    ## Only clients in the server machine can register accounts
+    ##
+    ##   ip_access: trusted_network
+    ip_access: all				## 开放XMPP新用户注册功能
+    ##
+    ## Local c2s or remote s2s users cannot register accounts
+    ##
+    ##   access_from: deny
+    access: register
+
+  ## 通讯录（好友列表）管理
+  mod_roster: #{}
+    versioning: true
+    #store_current_id: true		## 开启公共通讯录之后，无法使用此功能
+    db_type: sql
+
+## 公共通讯（共享好友列表）录管理
+  mod_shared_roster: #{}
+    db_type: sql
+
+## 线上信息统计与收集（服务器与用户数量）
+  mod_stats: {}
+
+## 获取远方用户的当地时间信息
+  mod_time: {}
+
+## 用户名片信息
+  mod_vcard:
+    search: true
+    db_type: sql
+
+## 服务器版本信息
+  mod_version: {}
+
+
