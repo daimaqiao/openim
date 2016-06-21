@@ -1,10 +1,22 @@
 ########################################
-OpenStore 1.0.1
+OpenIM 1.1.0
+3/2016.0621
+增强mod_receipts_ack的功能，
+	缓存带有“request receipts”标识的message，
+	并在收到“received receipts”标识时，清除相应的message，
+	(*)被缓存的message进入offline时，清除相应的缓存message，
+	(*)当message的接收者未及时回复“received receipts”时，
+		测试接收者是否处于异常状态，
+	(*)置异常状态的接收者为离线状态，并重发message
+标(*)的部分为未完全实现的功能
+
+########################################
+OpenIM 1.0.1
 2/2016.0511
 针对ejabberd 16.03(4)，p1_xml变更为fast_xml
 补充两个本地用户配置工具
 
 ########################################
-OpenStore 1.0.0
+OpenIM 1.0.0
 第一版，针对ejabberd 16.01
 

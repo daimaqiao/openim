@@ -3,7 +3,7 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 输出XMPP包内容到文件
 %%% Created	: 2016.3.22
-%%% Version	: 6/2016.0420
+%%% Version	: 7/2016.0617
 %%% Dependencies:
 %%%		mod_logger			log4erl的模块封装
 %%%		log4erl				独立的日志工具
@@ -16,8 +16,8 @@
 
 -module(mod_dump_packet).
 -author(daimaqiao).
--vsn(6).
--date({2016,4,20}).
+-vsn(7).
+-date({2016,6,17}).
 
 -behavior(gen_mod).
 
@@ -119,14 +119,21 @@ mod_opt_type(_) ->
 
 %% cache_opts(Opts)
 %% 将必要参数保存到ETS中
+%% 多个hosts共享一份
 %% 返回ok
 %%
 cache_opts(Opts) ->
-	ets:new(?MODULE, [set, protected, named_table]),
-	User= opt_of(user, Opts, []),
-	Stanza= opt_of(stanza, Opts, []),
-	ets:insert(?MODULE, {opts_user_stanza, {User, Stanza}}),
-	ok.
+	case lists:member(?MODULE, ets:all()) of
+		true ->
+			%% 参数只缓存一次
+			ok;
+		_ ->
+			ets:new(?MODULE, [set, protected, named_table]),
+			User= opt_of(user, Opts, []),
+			Stanza= opt_of(stanza, Opts, []),
+			ets:insert(?MODULE, {opts_user_stanza, {User, Stanza}}),
+			ok
+	end.
 
 %% opt_of(Key, Opts, Def)
 %% 从列表Opts中找到Key，返回Key对应的Val，或者Def
