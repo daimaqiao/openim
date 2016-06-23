@@ -1,14 +1,17 @@
 ########################################
-OpenIM 1.1.0
-3/2016.0621
-增强mod_receipts_ack的功能，
-	缓存带有“request receipts”标识的message，
-	并在收到“received receipts”标识时，清除相应的message，
-	(*)被缓存的message进入offline时，清除相应的缓存message，
-	(*)当message的接收者未及时回复“received receipts”时，
-		测试接收者是否处于异常状态，
-	(*)置异常状态的接收者为离线状态，并重发message
-标(*)的部分为未完全实现的功能
+OpenIM 1.1.1
+4/2016.0623
+增强mod_receipts_ack的功能，（效仿XEP-0184的行为）
+	cache带有“request receipts”标识的message，
+	并在收到“received receipts”标识时，清除相应的cache，
+	收到offline时，只处理带有“request receipts”标识的message，
+		清除相应的cache（如果cache中存在）
+	超过3min未收到相应的“received receipts”标识时，
+		kick异常recipient，
+			jid中含有resource时，只kick相应的recipient，
+			jid中未含有resource时，kick全部resource对应的多个recipient，
+		将message按offline规则处理，
+			offline规则会自动清理cache
 
 ########################################
 OpenIM 1.0.1
