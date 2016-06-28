@@ -1,10 +1,20 @@
 ########################################
+OpenIM 1.1.2
+5/2016.0628
+在mod_receipts_ack中添加用户上线行为检测，
+	接收者在上线的时候，可以及时处理cache中的message，
+	处理方式是resend
+替换原先通过kick功能断开recipient连接的方式，
+	改用close
+等待“received receipts”的时间缩短为10sec
+
+########################################
 OpenIM 1.1.1
 4/2016.0623
 增强mod_receipts_ack的功能，（效仿XEP-0184的行为）
 	cache带有“request receipts”标识的message，
 	并在收到“received receipts”标识时，清除相应的cache，
-	收到offline时，只处理带有“request receipts”标识的message，
+	收到offline行为时，只处理带有“request receipts”标识的message，
 		清除相应的cache（如果cache中存在）
 	超过3min未收到相应的“received receipts”标识时，
 		kick异常recipient，
