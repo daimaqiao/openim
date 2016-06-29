@@ -3,7 +3,7 @@
 %%% Author	: daimaqiao <daimaqiao@126.com>
 %%% Purpose	: 实现XEP-0184协议的服务端应答
 %%% Created	: 2016.3.29
-%%% Version	: 7/2016.0627
+%%% Version	: 8/2016.0629
 %%% Dependencies:
 %%%		log4erl		独立的日志工具
 %%%		mochiweb	log4erl依赖项
@@ -20,8 +20,8 @@
 
 -module(mod_receipts_ack).
 -author(daimaqiao).
--vsn(7).
--date({2016,6,27}).
+-vsn(8).
+-date({2016,6,29}).
 
 -behavior(gen_mod).
 
@@ -45,7 +45,7 @@
 
 
 -export([start/2, stop/1]).
--export([install_receipts_ack/1, receipts_ack/4, offline_ack/3, logon_ack/3]).
+-export([install_receipts_ack/1, receipts_ack/4, offline_ack/3, logon_ack/3, logoff_ack/3]).
 -export([mod_opt_type/1]).
 -export([go_offline/4]).
 
@@ -74,14 +74,21 @@ install_receipts_ack(Host) ->
 	mod_disco:register_feature(Host, ?NS_RECEIPTS),
 	ejabberd_hooks:add(offline_message_hook, Host, ?MODULE, offline_ack, 20),
 	ejabberd_hooks:add(user_send_packet, Host, ?MODULE, receipts_ack, 20),
-	ejabberd_hooks:add(sm_register_connection_hook, Host, ?MODULE, logon_ack, 20).
+	ejabberd_hooks:add(sm_register_connection_hook, Host, ?MODULE, logon_ack, 20),
+	ejabberd_hooks:add(sm_remove_connection_hook, Host, ?MODULE, logoff_ack, 20).
 %%
 uninstall_receipts_ack(Host) ->
 	mod_disco:unregister_feature(Host, ?NS_RECEIPTS),
 	ejabberd_hooks:delete(offline_message_hook, Host, ?MODULE, offline_ack, 20),
 	ejabberd_hooks:delete(user_send_packet, Host, ?MODULE, receipts_ack, 20),
-	ejabberd_hooks:delete(sm_register_connection_hook, Host, ?MODULE, logon_ack, 20).
+	ejabberd_hooks:delete(sm_register_connection_hook, Host, ?MODULE, logon_ack, 20),
+	ejabberd_hooks:delete(sm_remove_connection_hook, Host, ?MODULE, logoff_ack, 20).
 
+
+logoff_ack(_Sid, Jid, _Info) ->
+	KeyResend= cache_key(Jid),
+	Found= ets:lookup(?MODULE_RESEND, KeyResend),
+	?LOGD("just show receipts are waiting for on logoff: ~p", [Found]).
 
 logon_ack(_Sid, Jid, _Info) ->
 	KeyResend= cache_key(Jid),
