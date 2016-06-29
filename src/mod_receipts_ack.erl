@@ -214,6 +214,9 @@ cache_init() ->
 %%	(#jid(), #jid(), #xmlel(), binary()) ->
 %% true
 cache_save_chat(From, To, Packet, Id) ->
+    Resources= ejabberd_sm:get_user_resources(To#jid.user, To#jid.server),
+	?LOGD("there are ~p recipients of ~p online: resources= ~p",
+		  [length(Resources), jid:to_string(To), Resources]),
 	Ts= erlang:system_time(seconds),
 	Key= cache_key(From, Id),
 	KeyResend= cache_key(To),
@@ -310,8 +313,9 @@ cancel_timer_and_resend(Key) ->
 					false
 			end,
 			%% resend the message
-			?LOGD("resend message: ~p --> ~p", [jid:to_string(From), jid:to_string(To)]),
-			ejabberd_router:route(From, To, Packet);
+			?LOGD("resend message in 5sec: ~p --> ~p", [jid:to_string(From), jid:to_string(To)]),
+			timer:apply_after(5000, ejabberd_router, route, [From, To, Packet]);
+%%			ejabberd_router:route(From, To, Packet);
 		Found ->
 			?LOGD("timer waiting for receipts may be already cleared, resending is not required!~nfound= ~p", [Found]),
 			false
