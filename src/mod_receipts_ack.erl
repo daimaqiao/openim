@@ -88,12 +88,12 @@ uninstall_receipts_ack(Host) ->
 logoff_ack(_Sid, Jid, _Info) ->
 	KeyResend= cache_key(Jid),
 	Found= ets:lookup(?MODULE_RESEND, KeyResend),
-	?LOGD("just show receipts are waiting for on logoff: ~p", [Found]).
+	?LOGD("just show receipts are waiting for on logoff: key= ~p, found= ~p", [jid:to_string(Jid), Found]).
 
 logon_ack(_Sid, Jid, _Info) ->
 	KeyResend= cache_key(Jid),
 	Found= ets:take(?MODULE_RESEND, KeyResend),
-	?LOGD("check receipts are waiting for on logon: ~p", [Found]),
+	?LOGD("check receipts are waiting for on logon: key= ~p, found= ~p", [jid:to_string(Jid), Found]),
     lists:foreach(
 		fun({_, Key}) ->
 			cancel_timer_and_resend(Key)
